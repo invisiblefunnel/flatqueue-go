@@ -2,6 +2,8 @@
 
 A Go port of the [flatqueue](https://github.com/mourner/flatqueue) priority queue library. Push items by identifier (`int`) and value (`float64`).
 
+`Peek`, `PeekValue`, and `Pop` will panic if called on an empty queue. You must check `Len` accordingly.
+
 ```go
 q := flatqueue.New()
 
@@ -12,12 +14,11 @@ for i, item := range items {
 var (
     id    int
     value float64
-    ok    bool
 )
 
-id, ok = q.Peek()         // top item index, ok if not empty
-value, ok = q.PeekValue() // top item value, ok if not empty
-id, ok = q.Pop()          // remove and return the top item index, ok if not empty
+id = q.Peek()         // top item index
+value = q.PeekValue() // top item value
+id = q.Pop()          // remove and return the top item index
 
 // loop while queue is not empty
 for q.Len() > 0 {

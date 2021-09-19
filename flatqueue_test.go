@@ -29,25 +29,18 @@ func testMaintainsPriorityQueue(t *testing.T, n int, q *FlatQueue) {
 		q.Push(i, v)
 	}
 
-	v, ok := q.PeekValue()
-	if v != sorted[0] || !ok {
+	if q.PeekValue() != sorted[0] {
 		t.Fatal()
 	}
 
-	id, ok := q.Peek()
-	if data[id] != sorted[0] || !ok {
+	if data[q.Peek()] != sorted[0] {
 		t.Fatal()
 	}
 
 	result := make([]float64, n)
 	i := 0
 	for q.Len() > 0 {
-		id, ok := q.Pop()
-		if !ok {
-			t.Fatal()
-		}
-
-		result[i] = data[id]
+		result[i] = data[q.Pop()]
 		i++
 	}
 
@@ -81,10 +74,6 @@ func testLen(t *testing.T, q *FlatQueue) {
 	if q.Pop(); q.Len() != 0 {
 		t.Fatal()
 	}
-
-	if q.Pop(); q.Len() != 0 {
-		t.Fatal()
-	}
 }
 
 func TestPop(t *testing.T) {
@@ -93,28 +82,14 @@ func TestPop(t *testing.T) {
 }
 
 func testPop(t *testing.T, q *FlatQueue) {
-	// empty
-	_, ok := q.Pop()
-	if ok {
-		t.Fatal()
-	}
-
 	q.Push(1, 10)
 	q.Push(2, 11)
 
-	id, ok := q.Pop()
-	if id != 1 || !ok {
+	if q.Pop() != 1 {
 		t.Fatal()
 	}
 
-	id, ok = q.Pop()
-	if id != 2 || !ok {
-		t.Fatal()
-	}
-
-	// empty
-	_, ok = q.Pop()
-	if ok {
+	if q.Pop() != 2 {
 		t.Fatal()
 	}
 }
@@ -127,40 +102,30 @@ func TestPeek(t *testing.T) {
 func testPeek(t *testing.T, q *FlatQueue) {
 	q.Push(1, 10)
 
-	id, ok := q.Peek()
-	if id != 1 || !ok {
+	if q.Peek() != 1 {
 		t.Fatal()
 	}
 
 	q.Push(2, 11)
 
-	id, ok = q.Peek()
-	if id != 1 || !ok {
+	if q.Peek() != 1 {
 		t.Fatal()
 	}
 
 	q.Push(3, 9)
 
-	id, ok = q.Peek()
-	if id != 3 || !ok {
+	if q.Peek() != 3 {
 		t.Fatal()
 	}
 
 	q.Pop()
 
-	id, ok = q.Peek()
-	if id != 1 || !ok {
+	if q.Peek() != 1 {
 		t.Fatal()
 	}
 
 	q.Pop()
 	q.Pop()
-
-	// empty
-	_, ok = q.Peek()
-	if ok {
-		t.Fatal()
-	}
 }
 
 func TestPeekValue(t *testing.T) {
@@ -169,48 +134,32 @@ func TestPeekValue(t *testing.T) {
 }
 
 func testPeekValue(t *testing.T, q *FlatQueue) {
-	// empty
-	_, ok := q.PeekValue()
-	if ok {
-		t.Fatal()
-	}
-
 	q.Push(1, 10)
 
-	value, ok := q.PeekValue()
-	if value != float64(10) || !ok {
+	if q.PeekValue() != float64(10) {
 		t.Fatal()
 	}
 
 	q.Push(2, 11)
 
-	value, ok = q.PeekValue()
-	if value != float64(10) || !ok {
+	if q.PeekValue() != float64(10) {
 		t.Fatal()
 	}
 
 	q.Push(3, 9)
 
-	value, ok = q.PeekValue()
-	if value != float64(9) || !ok {
+	if q.PeekValue() != float64(9) {
 		t.Fatal()
 	}
 
 	q.Pop()
 
-	value, ok = q.PeekValue()
-	if value != float64(10) || !ok {
+	if q.PeekValue() != float64(10) {
 		t.Fatal()
 	}
 
 	q.Pop()
 	q.Pop()
-
-	// empty
-	_, ok = q.PeekValue()
-	if ok {
-		t.Fatal()
-	}
 }
 
 func TestEdgeCasesWithFewElements(t *testing.T) {
@@ -226,15 +175,40 @@ func testEdgeCasesWithFewElements(t *testing.T, q *FlatQueue) {
 	q.Push(2, 2)
 	q.Push(3, 1)
 
-	id, ok := q.Pop()
-	if id != 3 || !ok {
+	if q.Pop() != 3 {
 		t.Fatal()
 	}
 
-	id, ok = q.Pop()
-	if id != 2 || !ok {
+	if q.Pop() != 2 {
 		t.Fatal()
 	}
+}
+
+func TestPeekEmpty(t *testing.T) {
+	defer func() {
+		if recover() == nil {
+			t.Fatal()
+		}
+	}()
+	New().Peek()
+}
+
+func TestPeekValueEmpty(t *testing.T) {
+	defer func() {
+		if recover() == nil {
+			t.Fatal()
+		}
+	}()
+	New().PeekValue()
+}
+
+func TestPopEmpty(t *testing.T) {
+	defer func() {
+		if recover() == nil {
+			t.Fatal()
+		}
+	}()
+	New().Pop()
 }
 
 func BenchmarkPush(b *testing.B) {
@@ -245,6 +219,7 @@ func BenchmarkPush(b *testing.B) {
 		values[i] = randFloat64(-1000, 1000)
 	}
 
+	b.ReportAllocs()
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
@@ -260,6 +235,7 @@ func BenchmarkPushWithCapacity(b *testing.B) {
 		values[i] = randFloat64(-1000, 1000)
 	}
 
+	b.ReportAllocs()
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
@@ -274,6 +250,7 @@ func BenchmarkPop(b *testing.B) {
 		q.Push(i, randFloat64(-1000, 1000))
 	}
 
+	b.ReportAllocs()
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
@@ -288,6 +265,7 @@ func BenchmarkPopWithCapacity(b *testing.B) {
 		q.Push(i, randFloat64(-1000, 1000))
 	}
 
+	b.ReportAllocs()
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {

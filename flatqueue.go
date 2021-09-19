@@ -46,11 +46,7 @@ func (q *FlatQueue) Push(id int, value float64) {
 	q.values[pos] = value
 }
 
-func (q *FlatQueue) Pop() (int, bool) {
-	if q.length == 0 {
-		return 0, false
-	}
-
+func (q *FlatQueue) Pop() int {
 	top := q.ids[0]
 	q.length--
 
@@ -91,19 +87,13 @@ func (q *FlatQueue) Pop() (int, bool) {
 		q.values[pos] = value
 	}
 
-	return top, true
+	return top
 }
 
-func (q *FlatQueue) Peek() (int, bool) {
-	if q.length == 0 {
-		return 0, false
-	}
-	return q.ids[0], true
+func (q *FlatQueue) Peek() int {
+	return q.ids[0]
 }
 
-func (q *FlatQueue) PeekValue() (float64, bool) {
-	if q.length == 0 {
-		return 0, false
-	}
-	return q.values[0], true
+func (q *FlatQueue) PeekValue() float64 {
+	return q.values[0]
 }
