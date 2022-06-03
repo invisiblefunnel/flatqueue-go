@@ -1,24 +1,26 @@
 ## flatqueue-go [![Tests](https://github.com/invisiblefunnel/flatqueue-go/actions/workflows/go.yml/badge.svg)](https://github.com/invisiblefunnel/flatqueue-go/actions/workflows/go.yml)
 
-A Go port of the [flatqueue](https://github.com/mourner/flatqueue) priority queue library. Push items by identifier (`int`) and value (`float64`).
+A Go port of the [flatqueue](https://github.com/mourner/flatqueue) priority queue library.
 
 `Peek`, `PeekValue`, and `Pop` will panic if called on an empty queue. You must check `Len` accordingly.
 
 ```go
-q := flatqueue.New()
+items := []Item{/* ... */}
 
-for i, item := range items {
-    q.Push(i, item.Value)
+q := flatqueue.New[Item, float64]()
+
+for _, item := range items {
+    q.Push(item, item.Value)
 }
 
 var (
-    id    int
+    item  Item
     value float64
 )
 
-id = q.Peek()         // top item index
+item = q.Peek()       // top item
 value = q.PeekValue() // top item value
-id = q.Pop()          // remove and return the top item index
+item = q.Pop()        // remove and return the top item
 
 // loop while queue is not empty
 for q.Len() > 0 {
@@ -29,9 +31,9 @@ for q.Len() > 0 {
 Specifying an initial capacity for the underlying slices may improve the performance of `Push` if you know, or can estimate, the maximum length of the queue. This does not limit the length of the queue.
 
 ```go
-q := flatqueue.NewWithCapacity(len(items))
+q := flatqueue.NewWithCapacity[Item, float64](len(items))
 
-for i, item := range items {
-    q.Push(i, item.Value)
+for _, item := range items {
+    q.Push(item, item.Value)
 }
 ```
