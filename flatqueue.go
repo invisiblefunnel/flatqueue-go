@@ -1,31 +1,33 @@
 package flatqueue
 
-type FlatQueue struct {
-	ids    []int
-	values []float64
+import "golang.org/x/exp/constraints"
+
+type FlatQueue[T any, V constraints.Ordered] struct {
+	items  []T
+	values []V
 	length int
 }
 
-func New() *FlatQueue {
-	return &FlatQueue{}
+func New[T any, V constraints.Ordered]() *FlatQueue[T, V] {
+	return &FlatQueue[T, V]{}
 }
 
-func NewWithCapacity(cap int) *FlatQueue {
-	return &FlatQueue{
-		ids:    make([]int, 0, cap),
-		values: make([]float64, 0, cap),
+func NewWithCapacity[T any, V constraints.Ordered](cap int) *FlatQueue[T, V] {
+	return &FlatQueue[T, V]{
+		items:  make([]T, 0, cap),
+		values: make([]V, 0, cap),
 	}
 }
 
-func (q *FlatQueue) Len() int {
+func (q *FlatQueue[_, _]) Len() int {
 	return q.length
 }
 
-func (q *FlatQueue) Push(id int, value float64) {
+func (q *FlatQueue[T, V]) Push(item T, value V) {
 	pos := q.length
 	q.length++
 
-	q.ids = append(q.ids, id)
+	q.items = append(q.items, item)
 	q.values = append(q.values, value)
 
 	for pos > 0 {
@@ -36,25 +38,25 @@ func (q *FlatQueue) Push(id int, value float64) {
 			break
 		}
 
-		q.ids[pos] = q.ids[parent]
+		q.items[pos] = q.items[parent]
 		q.values[pos] = parentValue
 
 		pos = parent
 	}
 
-	q.ids[pos] = id
+	q.items[pos] = item
 	q.values[pos] = value
 }
 
-func (q *FlatQueue) Pop() int {
-	top := q.ids[0]
+func (q *FlatQueue[T, _]) Pop() T {
+	top := q.items[0]
 	q.length--
 
 	if q.length > 0 {
-		id := q.ids[q.length]
+		id := q.items[q.length]
 		value := q.values[q.length]
 
-		q.ids[0] = id
+		q.items[0] = id
 		q.values[0] = value
 
 		halfLength := q.length >> 1
@@ -64,13 +66,13 @@ func (q *FlatQueue) Pop() int {
 			left := (pos << 1) + 1
 			right := left + 1
 
-			bestIndex := q.ids[left]
+			bestIndex := q.items[left]
 			bestValue := q.values[left]
 			rightValue := q.values[right]
 
 			if right < q.length && rightValue < bestValue {
 				left = right
-				bestIndex = q.ids[right]
+				bestIndex = q.items[right]
 				bestValue = rightValue
 			}
 
@@ -78,22 +80,22 @@ func (q *FlatQueue) Pop() int {
 				break
 			}
 
-			q.ids[pos] = bestIndex
+			q.items[pos] = bestIndex
 			q.values[pos] = bestValue
 			pos = left
 		}
 
-		q.ids[pos] = id
+		q.items[pos] = id
 		q.values[pos] = value
 	}
 
 	return top
 }
 
-func (q *FlatQueue) Peek() int {
-	return q.ids[0]
+func (q *FlatQueue[T, _]) Peek() T {
+	return q.items[0]
 }
 
-func (q *FlatQueue) PeekValue() float64 {
+func (q *FlatQueue[_, V]) PeekValue() V {
 	return q.values[0]
 }

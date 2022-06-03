@@ -1,3 +1,5 @@
 module github.com/invisiblefunnel/flatqueue-go
 
-go 1.16
+go 1.18
+
+require golang.org/x/exp v0.0.0-20220602145555-4a0574d9293f // indirect

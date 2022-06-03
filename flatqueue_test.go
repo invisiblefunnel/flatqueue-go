@@ -9,13 +9,13 @@ import (
 
 func TestMaintainsPriorityQueue(t *testing.T) {
 	n := 10000
-	testMaintainsPriorityQueue(t, n, New())
-	testMaintainsPriorityQueue(t, n, NewWithCapacity(n))
-	testMaintainsPriorityQueue(t, n, NewWithCapacity(n/4))
-	testMaintainsPriorityQueue(t, n, NewWithCapacity(n*2))
+	testMaintainsPriorityQueue(t, n, New[int, float64]())
+	testMaintainsPriorityQueue(t, n, NewWithCapacity[int, float64](n))
+	testMaintainsPriorityQueue(t, n, NewWithCapacity[int, float64](n/4))
+	testMaintainsPriorityQueue(t, n, NewWithCapacity[int, float64](n*2))
 }
 
-func testMaintainsPriorityQueue(t *testing.T, n int, q *FlatQueue) {
+func testMaintainsPriorityQueue(t *testing.T, n int, q *FlatQueue[int, float64]) {
 	data := make([]float64, n)
 	sorted := make([]float64, n)
 	for i := 0; i < n; i++ {
@@ -50,11 +50,11 @@ func testMaintainsPriorityQueue(t *testing.T, n int, q *FlatQueue) {
 }
 
 func TestLen(t *testing.T) {
-	testLen(t, New())
-	testLen(t, NewWithCapacity(100))
+	testLen(t, New[int, float64]())
+	testLen(t, NewWithCapacity[int, float64](100))
 }
 
-func testLen(t *testing.T, q *FlatQueue) {
+func testLen(t *testing.T, q *FlatQueue[int, float64]) {
 	if q.Len() != 0 {
 		t.Fatal()
 	}
@@ -77,11 +77,11 @@ func testLen(t *testing.T, q *FlatQueue) {
 }
 
 func TestPop(t *testing.T) {
-	testPop(t, New())
-	testPop(t, NewWithCapacity(100))
+	testPop(t, New[int, float64]())
+	testPop(t, NewWithCapacity[int, float64](100))
 }
 
-func testPop(t *testing.T, q *FlatQueue) {
+func testPop(t *testing.T, q *FlatQueue[int, float64]) {
 	q.Push(1, 10)
 	q.Push(2, 11)
 
@@ -95,11 +95,11 @@ func testPop(t *testing.T, q *FlatQueue) {
 }
 
 func TestPeek(t *testing.T) {
-	testPeek(t, New())
-	testPeek(t, NewWithCapacity(100))
+	testPeek(t, New[int, float64]())
+	testPeek(t, NewWithCapacity[int, float64](100))
 }
 
-func testPeek(t *testing.T, q *FlatQueue) {
+func testPeek(t *testing.T, q *FlatQueue[int, float64]) {
 	q.Push(1, 10)
 
 	if q.Peek() != 1 {
@@ -129,11 +129,11 @@ func testPeek(t *testing.T, q *FlatQueue) {
 }
 
 func TestPeekValue(t *testing.T) {
-	testPeekValue(t, New())
-	testPeekValue(t, NewWithCapacity(100))
+	testPeekValue(t, New[int, float64]())
+	testPeekValue(t, NewWithCapacity[int, float64](100))
 }
 
-func testPeekValue(t *testing.T, q *FlatQueue) {
+func testPeekValue(t *testing.T, q *FlatQueue[int, float64]) {
 	q.Push(1, 10)
 
 	if q.PeekValue() != float64(10) {
@@ -163,11 +163,11 @@ func testPeekValue(t *testing.T, q *FlatQueue) {
 }
 
 func TestEdgeCasesWithFewElements(t *testing.T) {
-	testEdgeCasesWithFewElements(t, New())
-	testEdgeCasesWithFewElements(t, NewWithCapacity(100))
+	testEdgeCasesWithFewElements(t, New[int, float64]())
+	testEdgeCasesWithFewElements(t, NewWithCapacity[int, float64](100))
 }
 
-func testEdgeCasesWithFewElements(t *testing.T, q *FlatQueue) {
+func testEdgeCasesWithFewElements(t *testing.T, q *FlatQueue[int, float64]) {
 	q.Push(0, 2)
 	q.Push(1, 1)
 	q.Pop()
@@ -190,7 +190,7 @@ func TestPeekEmpty(t *testing.T) {
 			t.Fatal()
 		}
 	}()
-	New().Peek()
+	New[int, float64]().Peek()
 }
 
 func TestPeekValueEmpty(t *testing.T) {
@@ -199,7 +199,7 @@ func TestPeekValueEmpty(t *testing.T) {
 			t.Fatal()
 		}
 	}()
-	New().PeekValue()
+	New[int, float64]().PeekValue()
 }
 
 func TestPopEmpty(t *testing.T) {
@@ -208,11 +208,11 @@ func TestPopEmpty(t *testing.T) {
 			t.Fatal()
 		}
 	}()
-	New().Pop()
+	New[int, float64]().Pop()
 }
 
 func BenchmarkPush(b *testing.B) {
-	q := New()
+	q := New[int, float64]()
 
 	values := make([]float64, b.N)
 	for i := 0; i < b.N; i++ {
@@ -228,7 +228,7 @@ func BenchmarkPush(b *testing.B) {
 }
 
 func BenchmarkPushWithCapacity(b *testing.B) {
-	q := NewWithCapacity(b.N)
+	q := NewWithCapacity[int, float64](b.N)
 
 	values := make([]float64, b.N)
 	for i := 0; i < b.N; i++ {
@@ -244,7 +244,7 @@ func BenchmarkPushWithCapacity(b *testing.B) {
 }
 
 func BenchmarkPop(b *testing.B) {
-	q := New()
+	q := New[int, float64]()
 
 	for i := 0; i < b.N; i++ {
 		q.Push(i, randFloat64(-1000, 1000))
@@ -259,7 +259,7 @@ func BenchmarkPop(b *testing.B) {
 }
 
 func BenchmarkPopWithCapacity(b *testing.B) {
-	q := NewWithCapacity(b.N)
+	q := NewWithCapacity[int, float64](b.N)
 
 	for i := 0; i < b.N; i++ {
 		q.Push(i, randFloat64(-1000, 1000))
