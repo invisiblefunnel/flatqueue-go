@@ -14,7 +14,7 @@ const (
 
 func TestMaintainsPriorityQueue(t *testing.T) {
 	n := 10000
-	q := New[int, float64]()
+	var q FlatQueue[int, float64]
 
 	data := make([]float64, n)
 	sorted := make([]float64, n)
@@ -50,7 +50,7 @@ func TestMaintainsPriorityQueue(t *testing.T) {
 }
 
 func TestLen(t *testing.T) {
-	q := New[int, float64]()
+	var q FlatQueue[int, float64]
 
 	if q.Len() != 0 {
 		t.Fatal()
@@ -74,7 +74,7 @@ func TestLen(t *testing.T) {
 }
 
 func TestPop(t *testing.T) {
-	q := New[int, float64]()
+	var q FlatQueue[int, float64]
 
 	q.Push(1, 10)
 	q.Push(2, 11)
@@ -89,7 +89,7 @@ func TestPop(t *testing.T) {
 }
 
 func TestPeek(t *testing.T) {
-	q := New[int, float64]()
+	var q FlatQueue[int, float64]
 
 	q.Push(1, 10)
 
@@ -120,7 +120,7 @@ func TestPeek(t *testing.T) {
 }
 
 func TestPeekValue(t *testing.T) {
-	q := New[int, float64]()
+	var q FlatQueue[int, float64]
 
 	q.Push(1, 10)
 
@@ -151,7 +151,7 @@ func TestPeekValue(t *testing.T) {
 }
 
 func TestEdgeCasesWithFewElements(t *testing.T) {
-	q := New[int, float64]()
+	var q FlatQueue[int, float64]
 
 	q.Push(0, 2)
 	q.Push(1, 1)
@@ -175,7 +175,8 @@ func TestPeekEmpty(t *testing.T) {
 			t.Fatal()
 		}
 	}()
-	New[int, float64]().Peek()
+	var q FlatQueue[int, float64]
+	q.Peek()
 }
 
 func TestPeekValueEmpty(t *testing.T) {
@@ -184,7 +185,8 @@ func TestPeekValueEmpty(t *testing.T) {
 			t.Fatal()
 		}
 	}()
-	New[int, float64]().PeekValue()
+	var q FlatQueue[int, float64]
+	q.PeekValue()
 }
 
 func TestPopEmpty(t *testing.T) {
@@ -193,23 +195,20 @@ func TestPopEmpty(t *testing.T) {
 			t.Fatal()
 		}
 	}()
-	New[int, float64]().Pop()
+	var q FlatQueue[int, float64]
+	q.Pop()
 }
 
 func BenchmarkPush(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 
-	var (
-		q      *FlatQueue[int, float64]
-		values []float64 = make([]float64, benchN)
-	)
-
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 
-		q = New[int, float64]()
+		var q FlatQueue[int, float64]
 
+		values := make([]float64, benchN)
 		for j := 0; j < benchN; j++ {
 			values[j] = rand.Float64()
 		}
@@ -227,13 +226,10 @@ func BenchmarkPop(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 
-	var q *FlatQueue[int, float64]
-
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 
-		q = New[int, float64]()
-
+		var q FlatQueue[int, float64]
 		for j := 0; j < benchN; j++ {
 			q.Push(j, rand.Float64())
 		}
@@ -251,16 +247,12 @@ func BenchmarkPushPop(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 
-	var (
-		q      *FlatQueue[int, float64]
-		values []float64 = make([]float64, benchN)
-	)
-
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 
-		q = New[int, float64]()
+		var q FlatQueue[int, float64]
 
+		values := make([]float64, benchN)
 		for i := 0; i < benchN; i++ {
 			values[i] = rand.Float64()
 		}

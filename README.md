@@ -21,7 +21,7 @@ func main() {
         {"Z", 3},
     }
 
-    q := flatqueue.New[Item, int]()
+    var q flatqueue.FlatQueue[Item, int]
 
     for _, item := range items {
         q.Push(item, item.Value)

@@ -10,10 +10,6 @@ type FlatQueue[T any, V constraints.Ordered] struct {
 	length int
 }
 
-func New[T any, V constraints.Ordered]() *FlatQueue[T, V] {
-	return &FlatQueue[T, V]{}
-}
-
 func (q *FlatQueue[_, _]) Len() int {
 	return q.length
 }
