@@ -5,9 +5,9 @@ A Go 1.18+ port of the [flatqueue](https://github.com/mourner/flatqueue) priorit
 `Peek`, `PeekValue`, and `Pop` will panic if called on an empty queue. You must check `Len` accordingly.
 
 ```go
-import (
-    "github.com/invisiblefunnel/flatqueue-go/v2"
-)
+package main
+
+import "github.com/invisiblefunnel/flatqueue-go/v2"
 
 type Item struct {
     Name  string
