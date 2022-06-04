@@ -7,7 +7,10 @@ import (
 	"testing"
 )
 
-const benchmarkN int = 100_000
+const (
+	benchN int = 100_000
+	benchK int = benchN / 1_000
+)
 
 func TestMaintainsPriorityQueue(t *testing.T) {
 	n := 10000
@@ -199,7 +202,7 @@ func BenchmarkPush(b *testing.B) {
 
 	var (
 		q      *FlatQueue[int, float64]
-		values []float64 = make([]float64, benchmarkN)
+		values []float64 = make([]float64, benchN)
 	)
 
 	for i := 0; i < b.N; i++ {
@@ -207,7 +210,7 @@ func BenchmarkPush(b *testing.B) {
 
 		q = New[int, float64]()
 
-		for j := 0; j < benchmarkN; j++ {
+		for j := 0; j < benchN; j++ {
 			values[j] = rand.Float64()
 		}
 
@@ -231,7 +234,7 @@ func BenchmarkPop(b *testing.B) {
 
 		q = New[int, float64]()
 
-		for j := 0; j < benchmarkN; j++ {
+		for j := 0; j < benchN; j++ {
 			q.Push(j, rand.Float64())
 		}
 
@@ -240,6 +243,37 @@ func BenchmarkPop(b *testing.B) {
 		// Empty the queue
 		for q.Len() > 0 {
 			q.Pop()
+		}
+	}
+}
+
+func BenchmarkPushPop(b *testing.B) {
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	var (
+		q      *FlatQueue[int, float64]
+		values []float64 = make([]float64, benchN)
+	)
+
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+
+		q = New[int, float64]()
+
+		for i := 0; i < benchN; i++ {
+			values[i] = rand.Float64()
+		}
+
+		b.StartTimer()
+
+		for j := 0; j < benchN; j += benchK {
+			for k := 0; k < benchK; k++ {
+				q.Push(j+k, values[j+k])
+			}
+			for k := 0; k < benchK; k++ {
+				q.Pop()
+			}
 		}
 	}
 }
