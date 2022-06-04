@@ -1,6 +1,6 @@
 ## flatqueue-go [![Tests](https://github.com/invisiblefunnel/flatqueue-go/actions/workflows/go.yml/badge.svg)](https://github.com/invisiblefunnel/flatqueue-go/actions/workflows/go.yml)
 
-A Go port of the [flatqueue](https://github.com/mourner/flatqueue) priority queue library.
+A Go 1.18+ port of the [flatqueue](https://github.com/mourner/flatqueue) priority queue library using generics.
 
 `Peek`, `PeekValue`, and `Pop` will panic if called on an empty queue. You must check `Len` accordingly.
 
