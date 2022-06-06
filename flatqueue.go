@@ -25,8 +25,10 @@ func (q *FlatQueue) Push(id int, value float64) {
 	pos := q.length
 	q.length++
 
-	q.ids = append(q.ids, id)
-	q.values = append(q.values, value)
+	if q.length > len(q.ids) {
+		q.ids = append(q.ids, id)
+		q.values = append(q.values, value)
+	}
 
 	for pos > 0 {
 		parent := (pos - 1) >> 1

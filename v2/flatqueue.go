@@ -18,8 +18,10 @@ func (q *FlatQueue[T, V]) Push(item T, value V) {
 	pos := q.length
 	q.length++
 
-	q.items = append(q.items, item)
-	q.values = append(q.values, value)
+	if q.length > len(q.items) {
+		q.items = append(q.items, item)
+		q.values = append(q.values, value)
+	}
 
 	for pos > 0 {
 		parent := (pos - 1) >> 1
