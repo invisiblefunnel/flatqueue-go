@@ -92,3 +92,9 @@ func (q *FlatQueue[T, _]) Peek() T {
 func (q *FlatQueue[_, V]) PeekValue() V {
 	return q.values[0]
 }
+
+func (q *FlatQueue[_, _]) Clear() {
+	q.length = 0
+	q.items = q.items[:0]
+	q.values = q.values[:0]
+}
