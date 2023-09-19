@@ -99,3 +99,9 @@ func (q *FlatQueue) Peek() int {
 func (q *FlatQueue) PeekValue() float64 {
 	return q.values[0]
 }
+
+func (q *FlatQueue) Clear() {
+	q.length = 0
+	q.ids = q.ids[:0]
+	q.values = q.values[:0]
+}

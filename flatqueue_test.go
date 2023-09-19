@@ -211,6 +211,40 @@ func TestPopEmpty(t *testing.T) {
 	New().Pop()
 }
 
+func TestClear(t *testing.T) {
+	var q FlatQueue
+
+	q.Clear() // ok to clear empty queue
+
+	q.Push(1, 1)
+	q.Push(2, 2)
+
+	if q.Len() != 2 {
+		t.Fatal()
+	}
+
+	q.Clear()
+
+	if q.Len() != 0 {
+		t.Fatal()
+	}
+
+	q.Push(3, 3)
+	q.Push(4, 4)
+
+	if q.Pop() != 3 {
+		t.Fatal()
+	}
+
+	if q.Pop() != 4 {
+		t.Fatal()
+	}
+
+	if q.Len() != 0 {
+		t.Fatal()
+	}
+}
+
 func BenchmarkPush(b *testing.B) {
 	q := New()
 
